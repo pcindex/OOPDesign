@@ -96,3 +96,13 @@ class Game:
         moveColumn = int(input(f"Enter column between {0} and {colCnt - 1} to add piece: "))
         moveRow = self._grid.placePiece(moveColumn, player.getPieceColor())
         return (moveRow, moveColumn)
+    
+
+    def playRound(self):
+        while True:
+            for player in self._players:
+                row, col = self.playMove(player)
+                pieceColor = player.getPieceColor()
+                if self._grid.checkWin(self._connectN, row, col, pieceColor):
+                    self._score[player.getName()] += 1
+                    return player
