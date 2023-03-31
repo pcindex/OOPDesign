@@ -15,7 +15,7 @@ class Grid:
 
     def initGrid(self):
         self._grid = ([[GridPosition.EMPTY for _ in range(self._columns)] 
-                       for _ in range(self._rows_)]) #EMPTY for the size of columns *(copied) to the size of rows
+                       for _ in range(self._rows)]) #EMPTY for the size of columns *(copied) to the size of rows
         
 
     def getGrid(self):
@@ -39,6 +39,50 @@ class Grid:
                 return row
             
 
+    def checkWin(self, connectN, row, col, piece):
+        count = 0
+        # Check horizontal
+        for c in range(self._columns):
+            if self._grid[row][c] == piece:
+                count += 1
+            else:
+                count = 0
+            if count == connectN:
+                return True
+
+        # Check vertical
+        count = 0
+        for r in range(self._rows):
+            if self._grid[r][col] == piece:
+                count += 1
+            else:
+                count = 0
+            if count == connectN:
+                return True
+
+        # Check diagonal
+        count = 0
+        for r in range(self._rows):
+            c = row + col - r
+            if c >= 0 and c < self._columns and self._grid[r][c] == piece:
+                count += 1
+            else:
+                count = 0
+            if count == connectN:
+                return True
+
+        # Check anti-diagonal
+        count = 0
+        for r in range(self._rows):
+            c = col - row + r
+            if c >= 0 and c < self._columns and self._grid[r][c] == piece:
+                count += 1
+            else:
+                count = 0
+            if count == connectN:
+                return True
+
+        return False
 
 
 class Player:
@@ -106,3 +150,19 @@ class Game:
                 if self._grid.checkWin(self._connectN, row, col, pieceColor):
                     self._score[player.getName()] += 1
                     return player
+                
+
+    def play(self):
+        maxScore = 0
+        winner = None
+        while maxScore < self._targetScore:
+            winner = self.playRound()
+            print(f"{winner.getName()} won the round")
+            maxScore = max(self._score[winner.getName()], maxScore)
+
+            self._grid.initGrid() # reset Grid
+        print(f"{winner.getName()} won the game")
+
+grid = Grid(6, 7)
+game = Game(grid, 4, 2)
+game.play()
